@@ -70,16 +70,18 @@ def auditmsg():
 def receive():
     data = request.get_json()
     company = data.get("company")
-    address = data.get("address")
+    pickup_address = data.get("pickup_address")
+    delivery_address = data.get("delivery_address")
     description = data.get("description")
     weight = data.get("weight")
     dimensions = data.get("dimensions")
-    
-    coordinates = geocoder.google(address)
+    pickup_address_coordinates = geocoder.google(pickup_address)
+    delivery_address_coordinates = geocoder.google(delivery_address)
     expiry = datetime.datetime.now() + datetime.timedelta(hours=1)
     # Process to DB?
     shipment = dbname["shipment"] # This will create a collection called 'shipment' if it does not exist
-    details = { "Company": company, "address": address, "description": description, "weight": weight, "coordinates": coordinates, "expiry": expiry, "dimensions": dimensions }
+    details = { "Company": company, "pickup_address": pickup_address, "description": description, "weight": weight, "pickup_address_coordinates": pickup_address_coordinates, "expiry": expiry, "dimensions": dimensions, "delivery_address": delivery_address, "delivery_address_coordinates": delivery_address_coordinates }
+
     try:
         x = shipment.insert_one(details)
     except:
