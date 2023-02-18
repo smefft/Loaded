@@ -9,3 +9,17 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 }
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+input,
+textarea {
+  display: block;
+}
+
+input[type="checkbox"] {
+  display: inline;
+}
