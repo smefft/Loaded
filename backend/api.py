@@ -50,6 +50,7 @@ def receive():
     weight = data.get("weight")
     coordinates = geocoder.google(address)
     # Process to DB?
+    #
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
 
 # Start the Flask app
