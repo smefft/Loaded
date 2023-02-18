@@ -1,14 +1,22 @@
+import datetime
 from twilio.rest import Client
 from twilio.base.exceptions import TwilioRestException
 from urllib import request
 from flask import Flask
 import json
 import geocoder
+from pymongo import MongoClient
 
 # Authenticate to Twilio
 account_sid = "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 auth_token = "your_auth_token"
 client = Client(account_sid, auth_token)
+
+# Authenticate to Database
+def get_database():
+    CONNECTION_STRING = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    client = MongoClient(CONNECTION_STRING)
+    return client['shipments'] # This will create a database called 'shipments' if does not exist
 
 # Initialize the Flask app
 app = Flask(__name__)
@@ -50,10 +58,15 @@ def receive():
     description = data.get("description")
     weight = data.get("weight")
     coordinates = geocoder.google(address)
+    expiry = datetime.datetime.now() + datetime.timedelta(hours=1)
     # Process to DB?
-    #
-    return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
+    shipment = dbname["shipment"] # This will create a collection called 'shipment' if it does not exist
+    details ={ "Company": company, "address": address, "description": description, "weight": weight, "coordinates": coordinates, "expiry": expiry}
+    x = shipment.insert_one(details)
+    if(x):
+        return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
 
 # Start the Flask app
 if __name__ == '__main__':
+    dbname = get_database()
     app.run(host='0.0.0.0', port=80)
