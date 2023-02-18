@@ -4,6 +4,8 @@ import LookForShipment from "@/components/LookForShipment";
 import ShipmentRequestNotification from "@/components/notifications/ShipmentRequestNotification";
 import RequestPickup from "@/components/RequestPickup";
 
+import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+
 export default function Home() {
   return (
     <>
@@ -14,6 +16,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div id="app">
+        <a href="api/auth/logout">Log out</a>
         <RequestPickup />
         <LookForShipment />
         <ShipmentRequestNotification
@@ -26,3 +29,5 @@ export default function Home() {
     </>
   );
 }
+
+export const getServerSideProps = withPageAuthRequired();
