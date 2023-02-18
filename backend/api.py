@@ -57,11 +57,13 @@ def receive():
     address = data.get("address")
     description = data.get("description")
     weight = data.get("weight")
+    dimensions = data.get("dimensions")
+    
     coordinates = geocoder.google(address)
     expiry = datetime.datetime.now() + datetime.timedelta(hours=1)
     # Process to DB?
     shipment = dbname["shipment"] # This will create a collection called 'shipment' if it does not exist
-    details ={ "Company": company, "address": address, "description": description, "weight": weight, "coordinates": coordinates, "expiry": expiry}
+    details ={ "Company": company, "address": address, "description": description, "weight": weight, "coordinates": coordinates, "expiry": expiry, "dimensions": dimensions }
     try:
         x = shipment.insert_one(details)
     except:
