@@ -7,21 +7,21 @@ import json
 import geocoder
 from pymongo import MongoClient
 
-# Authenticate to Twilio
+###### Authenticate to Twilio ######
 account_sid = "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 auth_token = "your_auth_token"
 client = Client(account_sid, auth_token)
 
-# Authenticate to Database
+###### Authenticate to Database ######
 def get_database():
     CONNECTION_STRING = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
     client = MongoClient(CONNECTION_STRING)
     return client['shipments'] # This will create a database called 'shipments' if does not exist
 
-# Initialize the Flask app
+###### Initialize the Flask app ######
 app = Flask(__name__)
 
-# API Send Message
+###### API Send Message ######
 @app.route("/api/v1/send/message", methods=["POST"])
 def sendmessage():
     data = request.get_json()
@@ -35,7 +35,7 @@ def sendmessage():
     except TwilioRestException as err:
         return json.dumps({'error':err}), 500, {'ContentType':'application/json'}
 
-# API Send Calls
+###### API Send Calls ######
 @app.route("/api/v1/send/call", methods=["POST"])
 def sendcall():
     data = request.get_json()
@@ -48,8 +48,24 @@ def sendcall():
         return json.dumps({'call_id':call.sid}), 200, {'ContentType':'application/json'}
     except TwilioRestException as err:
         return json.dumps({'error':err}), 500, {'ContentType':'application/json'}
+    
+###### API Audit Calls ######
+@app.route("/api/v1/send/auditcalls", methods=["GET"])
+def auditcalls():
+    sms_dict = {}
+    for sms in client.call.list():
+        sms_dict.append(sms.to)
+    return json.dumps(sms_dict), 200, {'ContentType':'application/json'}
 
-# API Receive Shipments
+###### API Audit Messages ######
+@app.route("/api/v1/send/auditmsg", methods=["GET"])
+def auditmsg():
+    msg_dict = {}
+    for msg in client.messages.list():
+        msg_dict.append(msg.to)
+    return json.dumps(msg_dict), 200, {'ContentType':'application/json'}
+
+###### API Receive Shipments ######
 @app.route("/api/v1/receive", methods=["POST"])
 def receive():
     data = request.get_json()
@@ -63,7 +79,7 @@ def receive():
     expiry = datetime.datetime.now() + datetime.timedelta(hours=1)
     # Process to DB?
     shipment = dbname["shipment"] # This will create a collection called 'shipment' if it does not exist
-    details ={ "Company": company, "address": address, "description": description, "weight": weight, "coordinates": coordinates, "expiry": expiry, "dimensions": dimensions }
+    details = { "Company": company, "address": address, "description": description, "weight": weight, "coordinates": coordinates, "expiry": expiry, "dimensions": dimensions }
     try:
         x = shipment.insert_one(details)
     except:
@@ -72,7 +88,7 @@ def receive():
         return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
          
 
-# Start the Flask app
+###### Connect to Database and Start the Flask app ######
 if __name__ == '__main__':
     dbname = get_database()
     app.run(host='0.0.0.0', port=80)
