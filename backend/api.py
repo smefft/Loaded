@@ -31,9 +31,10 @@ def sendmessage():
             from_= data.get("msg_from"), # Country Code + Phone Number
             body = data.get("msg_body")
         ) # The Message
-        return json.dumps({'message_id':message.sid}), 200, {'ContentType':'application/json'}
     except TwilioRestException as err:
         return json.dumps({'error':err}), 500, {'ContentType':'application/json'}
+    else:
+        return json.dumps({'message_id':message.sid}), 200, {'ContentType':'application/json'}
 
 ###### API Send Calls ######
 @app.route("/api/v1/send/call", methods=["POST"])
@@ -45,9 +46,10 @@ def sendcall():
             from_= data.get("msg_from"), # Country Code + Phone Number
             url = "http://demo.twilio.com/docs/voice.xml"
         )
-        return json.dumps({'call_id':call.sid}), 200, {'ContentType':'application/json'}
     except TwilioRestException as err:
         return json.dumps({'error':err}), 500, {'ContentType':'application/json'}
+    else:
+        return json.dumps({'call_id':call.sid}), 200, {'ContentType':'application/json'}
     
 ###### API Audit Calls ######
 @app.route("/api/v1/send/auditcalls", methods=["GET"])
