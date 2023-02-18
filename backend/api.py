@@ -62,9 +62,13 @@ def receive():
     # Process to DB?
     shipment = dbname["shipment"] # This will create a collection called 'shipment' if it does not exist
     details ={ "Company": company, "address": address, "description": description, "weight": weight, "coordinates": coordinates, "expiry": expiry}
-    x = shipment.insert_one(details)
-    if(x):
-        return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
+    try:
+        x = shipment.insert_one(details)
+    except:
+        return json.dumps({'success':False}), 200, {'ContentType':'application/json'}
+    else:
+        return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+         
 
 # Start the Flask app
 if __name__ == '__main__':
