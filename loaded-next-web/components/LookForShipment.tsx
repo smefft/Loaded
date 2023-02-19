@@ -5,7 +5,7 @@ export default function LookForShipment() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form action = "dashboards/dashboard" method = "post">
       <h1>Look for Shipment</h1>
       <ul>
         <li>
