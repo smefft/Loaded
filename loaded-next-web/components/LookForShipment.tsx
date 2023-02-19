@@ -6,7 +6,7 @@ export default function LookForShipment() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h1>Look for a load</h1>
+      <h1>Look for Shipment</h1>
       <ul>
         <li>
           <label htmlFor="date">When?</label>
@@ -23,14 +23,6 @@ export default function LookForShipment() {
             Ending city(zip or city, state, country)
           </label>
           <input type="text" name="destination_city" id="destination" />
-        </li>
-        <li>
-          <label htmlFor="departure">Departure Time</label>
-          <input type="date" name="departure_time" id="departure" />
-        </li>
-        <li>
-          <label htmlFor="dimensions">Truck Dimensions</label>
-          <input type="number" name="shipment_dimensions" id="dimensions" />
         </li>
         <button type="submit">Submit</button>
       </ul>
