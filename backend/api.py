@@ -2,7 +2,8 @@ import datetime
 from twilio.rest import Client
 from twilio.base.exceptions import TwilioRestException
 from urllib import request
-from flask import Flask, request, redirect
+from flask import Flask, request
+from flask_cors import CORS
 import json
 import geocoder
 from pymongo import MongoClient
@@ -22,6 +23,7 @@ def get_database():
 
 ###### Initialize the Flask app ######
 app = Flask(__name__)
+CORS(app)
 
 ###### API Send Message ######
 @app.route("/api/v1/send/message", methods=["POST"])
@@ -122,6 +124,7 @@ def receive():
 def getUser(auth_id):
     try:
         user = users.find_one({"auth_id": auth_id})
+        print(auth_id)
         if (user == None):
             return json.dumps({"success": True, "user": ""})
 
@@ -142,18 +145,20 @@ def getUser(auth_id):
                 
             }}), 200, {"ContentType": "application/json"}
 
-@app.route("/api/v1/createUser/<auth_id>", methods=["POST"])
-def createUser(auth_id):
+@app.route("/api/v1/createUser", methods=["POST"])
+def createUser():
     data = request.get_json()
+
+    auth_id = data.get("authId")
 
     user = users.find_one({"auth_id": auth_id})
     if (user != None):
         return "User already exists in database"
 
-    account_type = data.get("account_type")
+    account_type = data.get("accountType")
 
     if (account_type == "company"): # either company or driver
-        company_name = data.get("company_name")
+        company_name = data.get("companyName")
 
         try:
             users.insert_one({
@@ -167,9 +172,9 @@ def createUser(auth_id):
             return json.dumps({"success": True}), 200, {"ContentType": "application/json"}
 
     else:
-        driver_first_name = data.get("first_name")
-        driver_last_name = data.get("last_name")
-        driver_company = data.get("driver_company_name")
+        driver_first_name = data.get("firstName")
+        driver_last_name = data.get("lastName")
+        driver_company = data.get("driverCompanyName")
 
         try:
             users.insert_one({
