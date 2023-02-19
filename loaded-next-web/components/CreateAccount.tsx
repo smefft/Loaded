@@ -1,13 +1,60 @@
 import { useState } from "react";
 
-export default function CreateAccount() {
+interface Props {
+  authId: string | undefined;
+}
+
+interface Account {
+  authId: string | undefined;
+  accountType: "Shipping Company" | "Driver" | undefined;
+}
+
+interface CompanyAccount extends Account {
+  companyName: string;
+}
+
+interface DriverAccount extends Account {
+  firstName: string;
+  lastName: string;
+  driverCompanyName: string;
+}
+
+export default function CreateAccount({ authId }: Props) {
   const [accountType, setAccountType] = useState<
     "Shipping Company" | "Driver" | undefined
   >(undefined);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    alert("Will implement this");
+
+    if (!accountType) return;
+
+    let postData: Account | CompanyAccount | DriverAccount;
+
+    if (accountType === "Driver") {
+      postData = {
+        authId,
+        accountType,
+        firstName: "Test",
+        lastName: "Another Test",
+        driverCompanyName: "Some company",
+      };
+    } else {
+      postData = {
+        authId,
+        accountType,
+        companyName: "Another company",
+      };
+    }
+
+    let response = await fetch(`http://127.0.0.1:80/api/v1/createUser`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(postData),
+    });
+
+    let response_data = await response.json();
+    console.log(response_data);
   }
 
   return (

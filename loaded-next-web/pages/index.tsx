@@ -17,10 +17,6 @@ interface Props {
 }
 
 export default function Home({ idToken, user }: Props) {
-  if (!user) {
-    return <CreateAccount />;
-  }
-
   return (
     <>
       <Head>
@@ -30,17 +26,21 @@ export default function Home({ idToken, user }: Props) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div id="app">
-        <a href="api/auth/logout">Log out</a>
-        <RequestPickup />
-        <LookForShipment />
-        <ShipmentRequestNotification
-          requestFrom="Requester"
-          pickup="Detroit"
-          destination="Chicago"
-          shipmentDescription="Description of load and special features requested"
-        />
-      </div>
+      {user ? (
+        <div id="app">
+          <a href="api/auth/logout">Log out</a>
+          <RequestPickup />
+          <LookForShipment />
+          <ShipmentRequestNotification
+            requestFrom="Requester"
+            pickup="Detroit"
+            destination="Chicago"
+            shipmentDescription="Description of load and special features requested"
+          />
+        </div>
+      ) : (
+        <CreateAccount authId={idToken} />
+      )}
     </>
   );
 }
