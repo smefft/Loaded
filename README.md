@@ -27,4 +27,4 @@ We’ve learned about the importance of leveraging technology to address real-wo
 
 A fully functional mobile app would be our next move.
 
-<a href = https://smeffi.wixsite.com/loaded >
+(https://smeffi.wixsite.com/loaded)
