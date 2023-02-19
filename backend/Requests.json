@@ -1,0 +1,18 @@
+[
+    {
+    "request_id":1234,
+    "owner_id":11223344,
+    "request_type":"pickup",
+    "date": "2023-02-18",
+    "starting_city":"Grand Rapids",
+    "ending_city":"Chicago"
+    }
+    { 
+    "request_id":3456,
+    "owner_id":22334455,
+    "request_type":"looking_for_load",
+    "date": "2023-02-18",
+    "starting_city":"Detroit",
+    "ending_city":"Chicago"
+    }
+]
