@@ -31,18 +31,6 @@ export default function RequestPickup() {
             </label>
             <input type="text" name="destination_city" id="destination" />
           </li>
-          <li>
-            <label htmlFor="weight">Weight of shipment</label>
-            <input type="number" name="shipment_weight" id="weight" />
-          </li>
-          <li>
-            <label htmlFor="details">Short description of shipment</label>
-            <textarea name="shipment_details" id="details"></textarea>
-          </li>
-          <li>
-            <label htmlFor="safe">Required for safe shipment?</label>
-            <input type="checkbox" name="safe_shipment" id="safe" />
-          </li>
           <button type="submit">Submit</button>
         </ul>
       </form>
