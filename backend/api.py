@@ -123,12 +123,24 @@ def getUser(auth_id):
     try:
         user = users.find_one({"auth_id": auth_id})
         if (user == None):
-            return "User not found"
+            return json.dumps({"success": True, "user": ""})
 
     except:
         return json.dumps({"success": False}), 500, {"ContentType": "application/json"}
     else:
-        return json.dumps({"success": True}), 200, {"ContentType": "application/json"}
+        if (user["account_type"] == "company"): # either company or driver
+            return json.dumps({"success": True, "data": {
+                "account_type": user["account_type"],
+                "company_name": user["company_name"]
+            }}), 200, {"ContentType": "application/json"}
+        else:
+            return json.dumps({"success": True, "data": {
+                "account_type": user["account_type"],
+                "first_name": user["driver_first_name"],
+                "last_name": user["driver_last_name"],
+                "driver_company_name": user["driver_company"]
+                
+            }}), 200, {"ContentType": "application/json"}
 
 @app.route("/api/v1/createUser/<auth_id>", methods=["POST"])
 def createUser(auth_id):
@@ -139,18 +151,38 @@ def createUser(auth_id):
         return "User already exists in database"
 
     account_type = data.get("account_type")
-    company_name = data.get("company_name")
 
-    try:
-        users.insert_one({
-            "auth_id": auth_id,
-            "account_type": account_type,
-            "company_name": company_name,
-        })
-    except:
-        return json.dumps({"success": False}), 500, {"ContentType": "application/json"}
-    finally:
-        return json.dumps({"success": True}), 200, {"ContentType": "application/json"}
+    if (account_type == "company"): # either company or driver
+        company_name = data.get("company_name")
+
+        try:
+            users.insert_one({
+                "auth_id": auth_id,
+                "account_type": account_type,
+                "company_name": company_name,
+            })
+        except:
+            return json.dumps({"success": False}), 500, {"ContentType": "application/json"}
+        finally:
+            return json.dumps({"success": True}), 200, {"ContentType": "application/json"}
+
+    else:
+        driver_first_name = data.get("first_name")
+        driver_last_name = data.get("last_name")
+        driver_company = data.get("driver_company_name")
+
+        try:
+            users.insert_one({
+                "auth_id": auth_id,
+                "account_type": account_type,
+                "first_name": driver_first_name,
+                "last_name": driver_last_name,
+                "driver_company_name": driver_company
+            })
+        except:
+            return json.dumps({"success": False}), 500, {"ContentType": "application/json"}
+        finally:
+            return json.dumps({"success": True}), 200, {"ContentType": "application/json"}
 
 
 ###### Connect to Database and Start the Flask app ######

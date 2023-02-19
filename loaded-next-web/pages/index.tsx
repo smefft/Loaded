@@ -3,10 +3,24 @@ import Head from "next/head";
 import LookForShipment from "@/components/LookForShipment";
 import ShipmentRequestNotification from "@/components/notifications/ShipmentRequestNotification";
 import RequestPickup from "@/components/RequestPickup";
+import CreateAccount from "@/components/CreateAccount";
 
-import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
 
-export default function Home() {
+interface Props {
+  idToken: string | undefined;
+  user:
+    | string
+    | {
+        account_type: string;
+      };
+}
+
+export default function Home({ idToken, user }: Props) {
+  if (!user) {
+    return <CreateAccount />;
+  }
+
   return (
     <>
       <Head>
@@ -15,6 +29,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
       <div id="app">
         <a href="api/auth/logout">Log out</a>
         <RequestPickup />
@@ -30,4 +45,18 @@ export default function Home() {
   );
 }
 
-export const getServerSideProps = withPageAuthRequired();
+export const getServerSideProps = withPageAuthRequired({
+  async getServerSideProps({ req, res }) {
+    const data = await getSession(req, res);
+    const idToken: string | undefined = data?.idToken;
+
+    const response = await fetch(
+      `http://127.0.0.1:80/api/v1/getUser/${idToken}`
+    );
+    const { user } = await response.json();
+
+    return {
+      props: { idToken, user },
+    };
+  },
+});
